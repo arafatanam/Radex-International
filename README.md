@@ -12,11 +12,3 @@ npm run dev
 ```
 
 Build with `npm run build`; Vite writes the deployable site to `dist/`.
-
-## Deploy on Vercel
-
-- Root directory: `.` (project root)
-- Framework preset: Vite
-- Build command: `npm run build`
-- Output directory: `dist`
-- Install command: `npm install`
