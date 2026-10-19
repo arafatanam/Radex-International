@@ -12,3 +12,5 @@ npm run dev
 ```
 
 Build with `npm run build`; Vite writes the deployable site to `dist/`.
+
+The home hero video retries playback on the first user interaction if autoplay is blocked.

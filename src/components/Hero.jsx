@@ -1,10 +1,59 @@
+import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Chat } from './Icons.jsx';
 
 export default function Hero() {
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const interactionEvents = [window.PointerEvent ? 'pointerdown' : 'touchstart'];
+    const removeInteractionListeners = () => {
+      interactionEvents.forEach((event) =>
+        document.removeEventListener(event, startVideo, true)
+      );
+      document.removeEventListener('scroll', startOnScroll, true);
+    };
+    const startVideo = () => {
+      let playback;
+      try {
+        playback = video.play();
+      } catch (error) {
+        if (error.name !== 'NotAllowedError') console.error('Hero video playback failed.', error);
+        return;
+      }
+
+      if (!playback) {
+        removeInteractionListeners();
+        return;
+      }
+
+      playback.then(removeInteractionListeners).catch((error) => {
+        if (error.name !== 'NotAllowedError' && error.name !== 'AbortError') {
+          console.error('Hero video playback failed.', error);
+        }
+      });
+    };
+    const startOnScroll = () => {
+      document.removeEventListener('scroll', startOnScroll, true);
+      startVideo();
+    };
+
+    interactionEvents.forEach((event) =>
+      document.addEventListener(event, startVideo, { capture: true, passive: true })
+    );
+    document.addEventListener('scroll', startOnScroll, { capture: true, passive: true });
+    startVideo();
+
+    return removeInteractionListeners;
+  }, []);
+
   return (
     <section className="hero" aria-labelledby="hero-title">
       <video
+        ref={videoRef}
         className="hero-media"
         src="/hero.mp4"
         autoPlay
